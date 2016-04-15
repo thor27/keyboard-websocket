@@ -1,12 +1,11 @@
-
+#-*- coding: utf-8 -*-
 
 import evdev
-
-device = evdev.InputDevice('/dev/input/by-id/usb-USB_USB_Keykoard-event-kbd')
+import xinput
 
 from socketIO_client import SocketIO
 
-def read_keyboard(ws):
+def read_keyboard(device, ws):
     for event in device.read_loop():
         if event.type == evdev.ecodes.EV_KEY:
             key_event = evdev.categorize(event)
@@ -17,13 +16,21 @@ def read_keyboard(ws):
             })
             print get_type(key_event), key_event.keycode
 
+def load_device_filename():
+    with open('keyboard.cfg') as config:
+        filename = config.read().replace('\n','')
+    return filename
+
 def get_type(key_event):
-    if key_event.key_down:
-        return 'KEY_DOWN'
-    if key_event.key_up:
-        return 'KEY_UP'
-    if key_event.key_hold:
-        return 'KEY_HOLD'
+    if key_event.keystate == key_event.key_down:
+        return 'DOWN'
+    if key_event.keystate == key_event.key_up:
+        return 'UP'
+    if key_event.keystate == key_event.key_hold:
+        return 'HOLD'
 
 with SocketIO('localhost', 5000) as ws:
-    read_keyboard(ws)
+    device_filename = load_device_filename()
+    device = evdev.InputDevice(device_filename)
+    xinput.disable_device(device_filename)
+    read_keyboard(device, ws)

@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 
@@ -16,7 +18,6 @@ def test_connect():
 
 @socketio.on('hardware_event')
 def test_message(message):
-    print 'oi'
     emit('key_event', message, broadcast=True)
 
 if __name__ == '__main__':
