@@ -12,7 +12,7 @@ for num,device in enumerate(open_devices):
     while device.read_one():
         max_count -= 1
         if not max_count:
-            print 'Device', open_devices[num], 'seems to busy, removing!'
+            print 'Device', open_devices[num], 'seems too busy, removing!'
             del open_devices[num]
             break
 
