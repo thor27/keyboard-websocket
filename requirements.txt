@@ -1,2 +1,4 @@
-websocket-client
+flask-socketio 
+# socketIO_client
+-e git+https://github.com/thor27/socketIO-client.git@master#egg=socketIO_client
 evdev
