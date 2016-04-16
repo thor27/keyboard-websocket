@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 
+from __future__ import print_function
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import argparse
@@ -35,7 +36,7 @@ def main():
     debug = not args.silent
 
     if debug:
-        print 'Listening on http://{0}:{1}/socket.io'.format(args.hostname, args.port)
+        print('Listening on http://{0}:{1}/ '.format(args.hostname, args.port))
 
     socketio.run(app, host=args.hostname, port=args.port, debug=debug)
 
