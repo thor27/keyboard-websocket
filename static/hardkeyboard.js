@@ -9,7 +9,7 @@ function HardKeyboard(options) {
   HardKeyboard.prototype = {
 
     /**
-    Initalizes the form object
+    Initalizes the HardKeyboard object
     @method init
     **/
     init: function init(options) {
