@@ -21,6 +21,7 @@ def get_devices_to_id_dict():
 
 
 def get_id_from_device(device):
+    device = os.path.realpath(device)
     device_to_id = get_devices_to_id_dict()
     return device_to_id.get(device, '')
 
