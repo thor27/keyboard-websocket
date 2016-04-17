@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -48,7 +49,10 @@ def parse_args(args):
                         help='Specify socketIO hostname to connect. (Default: localhost)')
     parser.add_argument('-p', '--port', dest='port', type=int, default=5000,
                         help='Specify socketIO port to connect. (Default: 5000)')
-    parser.add_argument('-s', '--silent', dest='silent', action='store_true', help='Don\'t print to stdout')
+    parser.add_argument('-k', '--keep-keyboard-enabled', dest='disable_device', action='store_false',
+                        help='Keep keyboard running without disabling on X11')
+    parser.add_argument('-s', '--silent', dest='silent', action='store_true',
+                        help='Don\'t print to stdout')
 
     return parser.parse_args(args)
 
@@ -60,8 +64,10 @@ def main():
     else:
         device_filename = load_device_filename(args.keyboard_config_file)
 
+    if args.disable_device:
+        xinput.disable_device(device_filename)
+
     device = evdev.InputDevice(device_filename)
-    xinput.disable_device(device_filename)
     with SocketIO(args.hostname, args.port) as ws:
         read_keyboard(device, ws, args.silent)
 
