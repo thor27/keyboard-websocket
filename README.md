@@ -7,23 +7,27 @@ Read evdev device and send to websocket. Works only on Linux with X11.
 
 ## Install
 
-To run this project you need [Python Evdev](http://python-evdev.readthedocs.org/en/latest/), [flask-SocketIO](https://flask-socketio.readthedocs.org/en/latest/) and my own fork of [Python socketIO-client](https://github.com/thor27/socketIO-client). You need this to be running in a Linux environment with X11.
-
-
+To run this project you need [Xinput](http://www.x.org/archive/X11R7.5/doc/man/man1/xinput.1.html), [Python](https://www.python.org/), [Python Evdev](http://python-evdev.readthedocs.org/en/latest/), [flask-SocketIO](https://flask-socketio.readthedocs.org/en/latest/) and my own fork of [Python socketIO-client](https://github.com/thor27/socketIO-client). You need this to be running in a Linux environment with X11.
 
 To install this project, first you need to clone it:
 
 ```bash
-git clone https://github.com/thor27/multimonitor-browser.git`
+git clone https://github.com/thor27/multimonitor-browser.git
 ```
 
 Then, just install **requirements.txt** with pip:
 
 ```bash
-pip install -r requirements.txt`
+pip install -r requirements.txt
 ```
 
-[Python Evdev](http://python-evdev.readthedocs.org/en/latest/) needs special dependencies installed on your system to build and work. Refer to their [documentation](http://python-evdev.readthedocs.org/en/latest/) for more information
+**Python Evdev** needs special dependencies installed on your system to build and work. Refer to their [documentation](http://python-evdev.readthedocs.org/en/latest/) for more information
+
+On Debian, you can install **xinput** with:
+
+```bash
+apt install xinput
+```
 
 ## Usage
 
