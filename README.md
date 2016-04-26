@@ -79,6 +79,29 @@ All scripts used above has special command line arguments to change it's behavio
 ./hardware_app.py --help
 ```
 
+## Give /dev/input* keyboard permission to an user
+
+To do that, you need to create a new rule on **/etc/udev/rules.d/**:
+
+```bash
+vim /etc/udev/rules.d/99-user-input-reader.rules
+```
+Put this content on the file, where **username** is the name of the user you want to give this permission:
+
+```
+KERNEL=="event*", SUBSYSTEM=="input", RUN+="/usr/bin/setfacl -m u:username:r $env{DEVNAME}"
+```
+
+After that you can run:
+
+```bash
+sudo setfacl -m u:username:r /dev/input/eventx
+```
+To make the changes now. Remember to replace **username** with the correct name.
+
+**IMPORTANT** Before doing that, remember that given this power to any user, you will give the user and any software executed by them, the power to sniff any input device, **including reading passwords**. If it's possible, create a specific user with this permission that only runs this software.
+
+
 ## Contributors
 
 * Thomaz de Oliveira dos Reis <thor27@gmail.com>
