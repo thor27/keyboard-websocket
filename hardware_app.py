@@ -24,35 +24,65 @@ import xinput
 import argparse
 import sys
 import os
+import signal
 from socketIO_client import SocketIO
 
 
-def read_keyboard(device, ws, silent=False):
-    for event in device.read_loop():
-        if event.type == evdev.ecodes.EV_KEY:
-            key_event = evdev.categorize(event)
+class KeyboardReader(object):
+    def __init__(self, args):
+        self.args = args
+        if args.device_filename:
+            device_filename = args.device_filename
+        else:
+            device_filename = self.load_device_filename()
 
-            ws.emit('hardware_event', {
-                'type': get_type(key_event),
-                'data': key_event.keycode
-            })
-            if not silent:
-                print(get_type(key_event), key_event.keycode)
+        if args.disable_device:
+            xinput.disable_device(device_filename)
 
+        self.device = None
+        self.ws = None
 
-def load_device_filename(keyboard_config_file):
-    with open(keyboard_config_file) as config:
-        filename = config.read().replace('\n', '')
-    return filename
+        signal.signal(signal.SIGTERM, self.__stop_app)
+        signal.signal(signal.SIGINT, self.__stop_app)
 
+        self.device = evdev.InputDevice(device_filename)
+        self.ws = SocketIO(args.hostname, args.port)
+        self.read_keyboard()
 
-def get_type(key_event):
-    if key_event.keystate == key_event.key_down:
-        return 'DOWN'
-    if key_event.keystate == key_event.key_up:
-        return 'UP'
-    if key_event.keystate == key_event.key_hold:
-        return 'HOLD'
+    def __stop_app(self, signum, frame):
+        print('Trap called, exiting...')
+        if self.device:
+            self.device.close()
+
+        if self.ws:
+            self.ws._close()
+
+        sys.exit(0)
+
+    def read_keyboard(self):
+        for event in self.device.read_loop():
+            if event.type == evdev.ecodes.EV_KEY:
+                key_event = evdev.categorize(event)
+
+                self.ws.emit('hardware_event', {
+                    'type': self.get_type(key_event),
+                    'data': key_event.keycode
+                })
+                if not self.args.silent:
+                    print(self.get_type(key_event), key_event.keycode)
+
+    def load_device_filename(self):
+        with open(self.args.keyboard_config_file) as config:
+            filename = config.read().replace('\n', '')
+        return filename
+
+    def get_type(self, key_event):
+        if key_event.keystate == key_event.key_down:
+            return 'DOWN'
+        if key_event.keystate == key_event.key_up:
+            return 'UP'
+        if key_event.keystate == key_event.key_hold:
+            return 'HOLD'
 
 
 def parse_args(args):
@@ -76,17 +106,7 @@ def parse_args(args):
 
 def main():
     args = parse_args(sys.argv[1:])
-    if args.device_filename:
-        device_filename = args.device_filename
-    else:
-        device_filename = load_device_filename(args.keyboard_config_file)
-
-    if args.disable_device:
-        xinput.disable_device(device_filename)
-
-    device = evdev.InputDevice(device_filename)
-    with SocketIO(args.hostname, args.port) as ws:
-        read_keyboard(device, ws, args.silent)
+    KeyboardReader(args)
 
 
 if __name__ == '__main__':
