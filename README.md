@@ -50,6 +50,8 @@ Run **app.py** to start the SocketIO server
 ./app.py
 ```
 
+You can also run **app.py** as daemon with **gunicorn**. To do that, use the **start_gunicorn.sh** and **stop_gunicorn.sh** scripts to start and stop the SocketIO server respectively.
+
 Run **hardware_app.py** as root (or evdev allowed user)
 
 ```bash
