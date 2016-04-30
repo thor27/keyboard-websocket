@@ -14,7 +14,11 @@ function HardKeyboard(options) {
     **/
     init: function init(options) {
       var self = this;
-      this.socket = io.connect('http://' + document.domain + ':' + location.port);
+      if (options.url) {
+        this.socket = io.connect(options.url);
+      } else {
+        this.socket = io.connect('http://' + document.domain + ':' + location.port);
+      }
       this.socket.on('key_event', function(msg){
         self.processEvent(msg);
       });
