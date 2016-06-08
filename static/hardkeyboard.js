@@ -41,18 +41,31 @@ function HardKeyboard(options) {
 
     simulateKeyboard: function(box, msg) {
         var element = $(box),
-            new_text = '';
+            new_text = '',
+            old_text = element.text(),
+            char;
 
         if (msg.type == 'DOWN' || msg.type == 'HOLD') {
-
+          if (this.options.on_key_down && !this.options.on_key_down(msg.data)) {
+            return;
+          }
           if (msg.data == 'KEY_BACKSPACE') {
             new_text = element.text().slice(0,-1)
             element.text(new_text);
+            if (this.options.on_update) {
+              this.options.on_update(old_text, new_text);
+            }
           }
 
           if (this.VALID_KEYS.indexOf(msg.data) != -1) {
-            var char = msg.data.slice(-1);
+            if (this.options.on_valid_key_down && !this.options.on_valid_key_down(msg.data)) {
+              return;
+            }
+            char = msg.data.slice(-1);
             element.append(char);
+            if (this.options.on_update) {
+              this.options.on_update(old_text, element.text(), char);
+            }
           }
 
         }
