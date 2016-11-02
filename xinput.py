@@ -43,9 +43,9 @@ def enable_device(device):
     enable_id(get_id_from_device(device))
 
 
-def __trap_handler(signum, frame):
+def trap_handler(signum, frame):
     for id in disabled_ids:
         enable_id(id)
 
-signal.signal(signal.SIGTERM, __trap_handler)
-signal.signal(signal.SIGINT, __trap_handler)
+signal.signal(signal.SIGTERM, trap_handler)
+signal.signal(signal.SIGINT, trap_handler)

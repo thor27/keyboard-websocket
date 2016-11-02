@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Keyboard Websocket Tool Test Ground</title>
+    <link rel="stylesheet" type="text/css" href="/static/detect.css">
+    <script type="text/javascript" src="/static/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/static/socket.io.min.js"></script>
+    <script type="text/javascript" src="/static/keyboard_detection.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function(){
+            KeyboardDetect = new KeyboardDetect({
+              boxes: '#boxes',
+              redirect: "{{redirect}}",
+              button_label: "{{button}}"
+            })
+        });
+    </script>
+</head>
+<body>
+    <h1>{{title}}</h1>
+    <div class="msgbox">
+      <span class="message">
+        {{message}}
+      </span>
+      <div id="boxes"></div>
+    </div>
+</body>
+</html>
