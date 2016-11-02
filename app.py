@@ -44,8 +44,9 @@ def post_detect():
     redirect_url = request.values.get('redirect')
     save_conf(device_name)
 
-    if redirect:
+    if redirect_url:
         return redirect(redirect_url)
+
     return 'done', 200
 
 def get_detect():
@@ -83,7 +84,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 def save_conf(device):
-    keyboardcfg = os.path.join(os.path.dirname(__file__), 'keyboard.cfg')
+    keyboardcfg = os.environ.get('KEYBOARDCFG', os.path.join(os.path.dirname(__file__), 'keyboard.cfg'))
     with open(keyboardcfg, 'w') as config:
         config.write(device + '\n')
 
