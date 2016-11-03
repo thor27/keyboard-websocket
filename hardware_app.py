@@ -32,10 +32,6 @@ from socketIO_client import SocketIO
 class KeyboardReader(object):
     def __init__(self, args):
         self.args = args
-        if args.device_filename:
-            self.device_filename = args.device_filename
-        else:
-            self.device_filename = self.load_device_filename()
 
         self.device = None
         self.ws = None
@@ -47,6 +43,10 @@ class KeyboardReader(object):
         if args.all_devices:
             self.read_all_keyboards()
         else:
+            if args.device_filename:
+                self.device_filename = args.device_filename
+            else:
+                self.device_filename = self.load_device_filename()
             self.read_keyboard()
 
     def connect_keyboard(self):
@@ -80,14 +80,24 @@ class KeyboardReader(object):
 
     def get_all_devices(self):
         keyboards = os.popen('readlink -f /dev/input/by-path/*kbd').read().split('\n')
-        devices = [evdev.InputDevice(fn) for fn in keyboards if fn]
+
         open_devices = []
-        for device in devices:
+        for keyboard in keyboards:
+            if not keyboard:
+                continue
+
+            try:
+                device = evdev.InputDevice(keyboard)
+            except OSError:
+                continue
+
             try:
                 open_device = evdev.InputDevice(device.fn)
             except OSError:
-                pass
+                continue
+
             open_devices.append(open_device)
+
         return open_devices
 
 
